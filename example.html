@@ -1,0 +1,105 @@
+<html>
+<head>
+<meta charset="utf-8"/>
+<script type="text/javascript" src="gify.js"></script>
+<script type="text/javascript" src="jdataview.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+function handleFiles(e) {
+	var file = e.target.files[0];
+	var ctx = document.getElementById('canvas').getContext('2d');
+	var reader = new FileReader;
+
+ reader.onload = function(event) {
+	var blob = new Blob([event.target.result]);
+	window.URL = window.URL || window.webkitURL;
+	var blobURL = window.URL.createObjectURL(blob);
+	
+		var img = new Image();
+		img.src = blobURL;
+		
+		img.onload = function() {
+			var startTime = Date.now();
+			var gifInfo = gify.getInfo(reader.result, true);
+			console.log('duration: %s ms.', (Date.now() - startTime));
+			console.log(gifInfo);
+		};
+	};
+
+	reader.readAsArrayBuffer(file);
+}
+
+function getImageSize(img, maxWidth, maxHeight) {
+	var ratio = 1;
+
+	if(img.width > maxWidth)
+		ratio = maxWidth / img.width;
+	else if(img.height > maxHeight)
+		ratio = maxHeight / img.height;
+
+	var size = {};
+	size.height = Math.round(img.height * ratio);
+	size.width = Math.round(img.width * ratio);
+
+	return size;
+}
+
+function dataURItoArrayBuffer(dataURI) {
+	var byteString;
+	if (dataURI.split(',')[0].indexOf('base64') >= 0)
+		byteString = atob(dataURI.split(',')[1]);
+	else
+		byteString = unescape(dataURI.split(',')[1]);
+
+	// separate out the mime component
+	var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+
+	// write the bytes of the string to an ArrayBuffer
+	var ab = new ArrayBuffer(byteString.length);
+	var ia = new Uint8Array(ab);
+	for (var i = 0; i < byteString.length; i++) {
+		ia[i] = byteString.charCodeAt(i);
+	}
+
+	return ab;
+}
+
+window.onload = function() {
+	var input = document.getElementById('input');
+	input.addEventListener('change', handleFiles);
+}
+
+</script>
+</head>
+<body style='font-family:Arial, Helvetica, sans-serif;'>
+<h1>Gify Example</h1>
+<input type="file" id="input"/>
+<br>
+<div style="display:none">
+	<div id="template" style="margin-bottom:10px;">
+		<div id="img" style="float:left;"></div>
+		<div id="info" style="float:left;vertical-align:top;padding-left:10px;">
+			
+			<b>Copy Duration:</b> <span id="pt"></span><br>
+			<b>Exif Duration:</b> <span id="et"></span><br>
+			<b>File Size:</b> <span id="fs"></span><br>
+			<div id="exif" style="display:none">
+				<b>Make:</b> <span id="ma"></span><br>
+				<b>Model:</b> <span id="mo"></span><br>
+				<b>Artist:</b> <span id="ar"></span><br>
+				<b>Copyright:</b> <span id="cr"></span><br>
+				<b>Orientation:</b> <span id="or"></span><br>
+				<div id="gps" style="display:none">
+					<b>Latitude:</b> <span id="lat"></span><br>
+					<b>Longitude:</b> <span id="long"></span><br>
+					<div id="map" style="width:300px;height:212px"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div id="tbl"></div>
+<canvas id="canvas" style="display:none;"></canvas>
+</body>
+</html>
