@@ -1,5 +1,5 @@
 /*
- * gify v0.1
+ * gify v0.2
  * https://github.com/rfrench/gify
  *
  * Copyright 2013, Ryan French
@@ -11,6 +11,9 @@
 /*global console, jDataView, ArrayBuffer */
 
 var gify = (function() { 'use strict';
+  function getPaletteSize(palette) {
+    return (3 * Math.pow(2, 1 + bitToInt(palette.slice(5, 8))));
+  }
   function getDuration(duration) {
     return ((duration / 100) * 1000);
   }
@@ -24,11 +27,10 @@ var gify = (function() { 'use strict';
     }
     return a;
   }
-  function getSubBlocksSize(view, pos) {
+  function getSubBlockSize(view, pos) {
     var totalSize = 0; 
     while (true) {
       var size = view.getUint8(pos + totalSize, true);
-      //console.log(size);
       if (size === 0) {
         totalSize++;
         break;
@@ -79,8 +81,7 @@ var gify = (function() { 'use strict';
       //parse global palette
       var globalPalette = byteToBitArray(view.getUint8(10, true));
       if (globalPalette[0]) {
-        paletteSize = (3 * Math.pow(2, 1 + bitToInt(globalPalette.slice(5, 8))));
-        pos += paletteSize;
+        pos += getPaletteSize(globalPalette);
       }
 
       pos += 13;
@@ -103,6 +104,7 @@ var gify = (function() { 'use strict';
                       info.isBrowserDuration = true;
                     }
 
+                    //http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser-compatibility
                     info.duration += delay;
                     info.durationIE += (delay < 60) ? defaultDelay : delay;
                     info.durationSafari += (delay < 60) ? defaultDelay : delay;
@@ -120,11 +122,11 @@ var gify = (function() { 'use strict';
                   break;
                 case 0xFE: //COMMENT EXT BLOCK
                   pos += 2;
-                  pos += getSubBlocksSize(view, pos);
+                  pos += getSubBlockSize(view, pos);
                   break;
                 case 0xFF: //APPLICATION EXT BLOCK
                   pos += 14;
-                  pos += getSubBlocksSize(view, pos);
+                  pos += getSubBlockSize(view, pos);
                   break;
                 default: //UNKNOWN BLOCK
                   pos++;
@@ -135,16 +137,14 @@ var gify = (function() { 'use strict';
               var localPalette = byteToBitArray(view.getUint8(pos + 9, true));
               if (localPalette[0]) {
                 //local palette?
-                paletteSize = (3 * Math.pow(2, 1 + bitToInt(localPalette.slice(5, 8))));
-                pos += paletteSize;
+                pos += getPaletteSize(localPalette);
               }
               pos += 11;
-              pos += getSubBlocksSize(view, pos);
+              pos += getSubBlockSize(view, pos);
               break;
             case 0x3B: //TRAILER BLOCK (THE END)
               return info;
-            default: //UNKNOWN BLOCK (very bad)
-              console.log('unknown block @ %s', pos);
+            default: //UNKNOWN BLOCK (bad)
               pos++;
               break;
           }
@@ -154,6 +154,7 @@ var gify = (function() { 'use strict';
           return info;
         }
         
+        //this shouldn't happen, but if the trailer block is missing, we should bail at EOF
         if ((pos) >= sourceArrayBuffer.byteLength) { return info; }
       }
 
