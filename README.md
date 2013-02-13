@@ -36,7 +36,6 @@ var gifInfo = gify.getInfo(sourceArrayBuffer);
 
 ## TODO
 * Optimize this code.
-* Plain Text Extension Block support. (even though no one uses it)
 
 ## License
 Licence: [Do What The Fuck You Want To Public License](http://sam.zoy.org/wtfpl/)

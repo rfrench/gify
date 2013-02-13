@@ -1,5 +1,5 @@
 /*
- * gify v0.2
+ * gify v0.3
  * https://github.com/rfrench/gify
  *
  * Copyright 2013, Ryan French
@@ -93,9 +93,7 @@ var gify = (function() { 'use strict';
           {
             case 0x21: //EXTENSION BLOCK
               var type = view.getUint8(pos + 1, true);
-              switch(type)
-              {
-                case 0xF9: //GRAPHIC CONTROL EXT
+              if (type === 0xF9) {
                   var length = view.getUint8(pos + 2);
                   if (length === 4) {
                     var delay = getDuration(view.getUint16(pos + 4, true));
@@ -119,18 +117,10 @@ var gify = (function() { 'use strict';
                   else {
                     pos++;
                   }
-                  break;
-                case 0xFE: //COMMENT EXT BLOCK
-                  pos += 2;
-                  pos += getSubBlockSize(view, pos);
-                  break;
-                case 0xFF: //APPLICATION EXT BLOCK
-                  pos += 14;
-                  pos += getSubBlockSize(view, pos);
-                  break;
-                default: //UNKNOWN BLOCK
-                  pos++;
-                  break;
+              }
+              else { // AEB, CEB, PTEB, ETC
+                pos += 2;
+                pos += getSubBlockSize(view, pos);                
               }
               break;
             case 0x2C: //IMAGE BLOCK
