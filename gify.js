@@ -1,5 +1,5 @@
 /*
- * gify v0.3
+ * gify v0.4
  * https://github.com/rfrench/gify
  *
  * Copyright 2013, Ryan French
@@ -28,7 +28,7 @@ var gify = (function() { 'use strict';
     return a;
   }
   function getSubBlockSize(view, pos) {
-    var totalSize = 0; 
+    var totalSize = 0;
     while (true) {
       var size = view.getUint8(pos + totalSize, true);
       if (size === 0) {
@@ -38,7 +38,7 @@ var gify = (function() { 'use strict';
       else {
         totalSize += size + 1;
       }
-    } 
+    }
 
     return totalSize;
   }
@@ -112,6 +112,9 @@ var gify = (function() { 'use strict';
 
                     //increment frame count
                     info.frames++;
+                    if (info.frames > 1 && !info.animated) {
+                      info.animated = true;
+                    }
                     pos += 8;
                   }
                   else {
@@ -120,7 +123,7 @@ var gify = (function() { 'use strict';
               }
               else { // AEB, CEB, PTEB, ETC
                 pos += 2;
-                pos += getSubBlockSize(view, pos);                
+                pos += getSubBlockSize(view, pos);
               }
               break;
             case 0x2C: //IMAGE BLOCK
