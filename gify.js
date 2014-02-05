@@ -1,5 +1,5 @@
 /*
- * gify v0.4
+ * gify v0.5
  * https://github.com/rfrench/gify
  *
  * Copyright 2013, Ryan French
@@ -53,6 +53,7 @@ var gify = (function() { 'use strict';
         animated: false,
         frames: 0,
         isBrowserDuration: false,
+        frameDelays: [],
         duration: 0,
         durationIE: 0,
         durationSafari: 0,
@@ -109,6 +110,9 @@ var gify = (function() { 'use strict';
                     info.durationChrome += (delay < 20) ? defaultDelay : delay;
                     info.durationFirefox += (delay < 20) ? defaultDelay : delay;
                     info.durationOpera += (delay < 20) ? defaultDelay : delay;
+
+                    //push frame delay
+                    info.frameDelays.push(delay);
 
                     //increment frame count
                     info.frames++;

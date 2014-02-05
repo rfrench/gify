@@ -13,6 +13,7 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
 * **height** (int) - Canvas height.
 * **width** (int) - Canvas width.
 * **frames** (int) - Total number of frames within the GIF.
+* **frameDelays** (array) - An array of every frame delay.
 * **isBrowserDuration** (bool) - If any of the delay times are lower than the [minimum value](http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser-compatibility), this value will be set to true.
 * **duration** (int) - Actual duration calculated from the delay time for each frame. If isBrowserDuration is false, you should use this value.
 * **durationIE** (int) - Duration for Internet Explorer (16fps)
