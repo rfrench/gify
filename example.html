@@ -21,7 +21,7 @@ function handleFiles(e) {
 		
 		img.onload = function() {
 			var startTime = Date.now();
-			var gifInfo = gify.getInfo(reader.result, true);
+			var gifInfo = gify.getInfo(reader.result);
 			console.log('duration: %s ms.', (Date.now() - startTime));
 			console.log(gifInfo);
 		};

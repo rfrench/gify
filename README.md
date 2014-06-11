@@ -5,9 +5,10 @@ JavaScript API for decoding/parsing information from animated GIFs using ArrayBu
 gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary files. Please pull the latest from their repository.
 
 ## API
-* **getInfo**(sourceArrayBuffer)
+* **isAnimated**(sourceArrayBuffer) (bool)
+* **getInfo**(sourceArrayBuffer) (gifInfo)
 
-## Properties
+## gifInfo Properties
 * **valid** (bool) - Determines if the GIF is valid.
 * **animated** (bool) - Determines if the GIF is animated.
 * **height** (int) - Canvas height.
@@ -22,7 +23,8 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
 * **durationChrome** (int) - Duration for Chrome (50fps)
 * **durationOpera** (int) - Duration for Opera (50fps)
 
-### Parse GIF Info
+
+### Example
 ``` js
 //parse the GIF info
 var gifInfo = gify.getInfo(sourceArrayBuffer);
