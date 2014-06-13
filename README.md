@@ -15,6 +15,7 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
 * **valid** (bool) - Determines if the GIF is valid.
 * **animated** (bool) - Determines if the GIF is animated.
 * **globalPalette** (bool) - Determines if the GIF has a global color palette.
+* **globalPaletteSize** (int) - Size of the global color palette.
 * **height** (int) - Canvas height.
 * **width** (int) - Canvas width.
 * **loopCount** (int) - Total number of times the GIF will loop. 0 represents infitine.
@@ -33,6 +34,7 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
 * **height** (int) - Image height.
 * **width** (int) - Image width.
 * **localPalette** (bool) - Image has a local color palette.
+* **localPaletteSize** (int) - Size of the local color palette.
 * **interlace** (bool) - Image is/is not interlaced.
 * **delay** (int) - Delay time in milliseconds.
 * **disposal** (int) - Disposal method. (0-7). See [this](http://www.w3.org/Graphics/GIF/spec-gif89a.txt) for more details.
