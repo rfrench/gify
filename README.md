@@ -1,33 +1,95 @@
 # gify
-JavaScript API for decoding/parsing information from animated GIFs using ArrayBuffers.
+JavaScript API for decoding/parsing information from animated GIFs using an ArrayBuffer.
+
+## Why?
+Once I saw [vinepeek](http://www.vpeeker.com/), I immediately wanted to build a similar site for animated GIFs. The only problem was, there was no way to quickly determine the duration of an animated GIF, which varies in different browsers. Thus, gify was born over a weekend.
 
 ## Requirements
 gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary files. Please pull the latest from their repository.
 
-## API
+## Methods
 * **isAnimated**(sourceArrayBuffer) (bool)
 * **getInfo**(sourceArrayBuffer) (gifInfo)
 
-## gifInfo Properties
+## info Properties
 * **valid** (bool) - Determines if the GIF is valid.
 * **animated** (bool) - Determines if the GIF is animated.
+* **globalPalette** (bool) - Determines if the GIF has a global color palette.
 * **height** (int) - Canvas height.
 * **width** (int) - Canvas width.
-* **frames** (int) - Total number of frames within the GIF.
-* **frameDelays** (array) - An array of every frame delay.
+* **loopCount** (int) - Total number of times the GIF will loop. 0 represents infitine.
+* **images** ([images]) - Array of images contained in the GIF.
 * **isBrowserDuration** (bool) - If any of the delay times are lower than the [minimum value](http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser-compatibility), this value will be set to true.
-* **duration** (int) - Actual duration calculated from the delay time for each frame. If isBrowserDuration is false, you should use this value.
+* **duration** (int) - Actual duration calculated from the delay time for each image. If isBrowserDuration is false, you should use this value.
 * **durationIE** (int) - Duration for Internet Explorer (16fps)
-* **durationSafari** (int) - Duration for Safari (16fps)
-* **durationFirefox** (int) - Duration for Firefox (50fps)
-* **durationChrome** (int) - Duration for Chrome (50fps)
-* **durationOpera** (int) - Duration for Opera (50fps)
+* **durationSafari** (int) - Duration for Safari in milliseconds (16fps)
+* **durationFirefox** (int) - Duration for Firefox in milliseconds (50fps)
+* **durationChrome** (int) - Duration for Chrome in milliseconds (50fps)
+* **durationOpera** (int) - Duration for Opera in milliseconds (50fps)
 
+## image Properties
+* **top** (int) - Image top position (Y).
+* **left** (int) - Image left position (X).
+* **height** (int) - Image height.
+* **width** (int) - Image width.
+* **localPalette** (bool) - Image has a local color palette.
+* **interlace** (bool) - Image is/is not interlaced.
+* **delay** (int) - Delay time in milliseconds.
+* **disposal** (int) - Disposal method. (0-7). See [this](http://www.w3.org/Graphics/GIF/spec-gif89a.txt) for more details.
 
 ### Example
-``` js
-//parse the GIF info
-var gifInfo = gify.getInfo(sourceArrayBuffer);
+``` json
+{
+  "valid": true,
+  "globalPalette": true,
+  "globalPaletteSize": 256,
+  "loopCount": 0,
+  "height": 1610,
+  "width": 899,
+  "animated": true,
+  "images": [
+    {
+      "localPalette": false,
+      "localPaletteSize": 0,
+      "interlace": false,
+      "left": 0,
+      "top": 0,
+      "width": 1610,
+      "height": 899,
+      "delay": 350,
+      "disposal": 0
+    },
+    {
+      "localPalette": true,
+      "localPaletteSize": 256,
+      "interlace": false,
+      "left": 0,
+      "top": 0,
+      "width": 1610,
+      "height": 899,
+      "delay": 350,
+      "disposal": 0
+    },
+    {
+      "localPalette": true,
+      "localPaletteSize": 256,
+      "interlace": false,
+      "left": 0,
+      "top": 0,
+      "width": 1610,
+      "height": 899,
+      "delay": 350,
+      "disposal": 0
+    }
+  ],
+  "isBrowserDuration": false,
+  "duration": 2800,
+  "durationIE": 2800,
+  "durationSafari": 2800,
+  "durationFirefox": 2800,
+  "durationChrome": 2800,
+  "durationOpera": 2800
+}
 ```
 
 ## Resources
@@ -36,9 +98,6 @@ var gifInfo = gify.getInfo(sourceArrayBuffer);
 * [Animated GIF Frame Rate by Browser](http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser-compatibility) - An awesome breakdown of how each browser renders animated GIFs. Thanks to Jeremiah Johnson for doing the hard work.
 * [GIF Format](http://www.onicos.com/staff/iz/formats/gif.html) - GIF blocks.
 * [Hexfiend](http://ridiculousfish.com/hexfiend/) - Awesome open source HEX editor (OSX)
-
-## TODO
-* Optimize this code.
 
 ## License
 Licence: [Do What The Fuck You Want To Public License](http://sam.zoy.org/wtfpl/)

@@ -5,6 +5,7 @@
 <script type="text/javascript" src="jdataview.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
 <script type="text/javascript">
+var index = 1;
 
 function handleFiles(e) {
 	var file = e.target.files[0];
@@ -22,8 +23,18 @@ function handleFiles(e) {
 		img.onload = function() {
 			var startTime = Date.now();
 			var gifInfo = gify.getInfo(reader.result);
-			console.log('duration: %s ms.', (Date.now() - startTime));
-			console.log(gifInfo);
+
+			var template = $('#template').clone();
+			template.attr('id', 'gify_' + index);
+
+
+			template.html('<b>File:</b> ' + file.name + '<br>');
+			template.append('<b>Duration:</b> ' + (Date.now() - startTime) + ' ms.<br>');
+			template.append('<b>Frames:</b> ' + gifInfo.images.length);
+			template.append('<pre id="json">' + JSON.stringify(gifInfo, undefined, 2) + '</pre><br>');
+
+			index++;
+			$('#tbl').append(template);
 		};
 	};
 
@@ -73,32 +84,13 @@ window.onload = function() {
 </script>
 </head>
 <body style='font-family:Arial, Helvetica, sans-serif;'>
-<h1>Gify Example</h1>
+<h1>gify Example</h1>
 <input type="file" id="input"/>
 <br>
 <div style="display:none">
-	<div id="template" style="margin-bottom:10px;">
-		<div id="img" style="float:left;"></div>
-		<div id="info" style="float:left;vertical-align:top;padding-left:10px;">
-			
-			<b>Copy Duration:</b> <span id="pt"></span><br>
-			<b>Exif Duration:</b> <span id="et"></span><br>
-			<b>File Size:</b> <span id="fs"></span><br>
-			<div id="exif" style="display:none">
-				<b>Make:</b> <span id="ma"></span><br>
-				<b>Model:</b> <span id="mo"></span><br>
-				<b>Artist:</b> <span id="ar"></span><br>
-				<b>Copyright:</b> <span id="cr"></span><br>
-				<b>Orientation:</b> <span id="or"></span><br>
-				<div id="gps" style="display:none">
-					<b>Latitude:</b> <span id="lat"></span><br>
-					<b>Longitude:</b> <span id="long"></span><br>
-					<div id="map" style="width:300px;height:212px"></div>
-				</div>
-			</div>
-		</div>
-	</div>
+	<div id="template" style="margin-bottom:10px;"></div>
 </div>
+<br>
 <div id="tbl"></div>
 <canvas id="canvas" style="display:none;"></canvas>
 </body>

@@ -1,5 +1,5 @@
 /*
- * gify v0.6
+ * gify v1.0
  * https://github.com/rfrench/gify
  *
  * Copyright 2013, Ryan French
@@ -11,21 +11,23 @@
 /*global console, jDataView, ArrayBuffer */
 
 var gify = (function() { 'use strict';
+  var defaultDelay = 100;
+
   function getPaletteSize(palette) {
     return (3 * Math.pow(2, 1 + bitToInt(palette.slice(5, 8))));
+  }
+  function getBitArray(num) {
+    var bits = [];
+    for (var i = 7; i >= 0; i--) {
+      bits.push(!!(num & (1 << i)) ? 1 : 0);
+    }
+    return bits;
   }
   function getDuration(duration) {
     return ((duration / 100) * 1000);
   }
   function bitToInt(bitArray) {
     return bitArray.reduce(function(s, n) { return s * 2 + n; }, 0);
-  }
-  function byteToBitArray(val) {
-    var a = [];
-    for (var i = 7; i >= 0; i--) {
-      a.push(!!(val & (1 << i)));
-    }
-    return a;
   }
   function getSubBlockSize(view, pos) {
     var totalSize = 0;
@@ -39,20 +41,34 @@ var gify = (function() { 'use strict';
         totalSize += size + 1;
       }
     }
-
     return totalSize;
   }
+  function getImage() {
+    return {
+        localPalette: false,
+        localPaletteSize: 0,
+        interlace: false,
+        left: 0,
+        top: 0,
+        width: 0,
+        height: 0,
+        delay: 0,
+        disposal: 0
+    };
+  }
   function getInfo(sourceArrayBuffer, quickPass) {
-    var pos = 0, size = 0, paletteSize = 0;
-    var defaultDelay = getDuration(10);
+    var pos = 0, size = 0, paletteSize = 0, image;
+
     var info = {
       valid: false,
+      globalPalette: false,
+      globalPaletteSize: 0,
+      loopCount: 0,
       height: 0,
       width: 0,
       animated: false,
-      frames: 0,
+      images: [],
       isBrowserDuration: false,
-      frameDelays: [],
       duration: 0,
       durationIE: 0,
       durationSafari: 0,
@@ -79,12 +95,15 @@ var gify = (function() { 'use strict';
     info.valid = true;
 
     //parse global palette
-    var globalPalette = byteToBitArray(view.getUint8(10, true));
-    if (globalPalette[0]) {
-      pos += getPaletteSize(globalPalette);
+    var unpackedField = getBitArray(view.getUint8(10, true));
+    if (unpackedField[0]) {
+      var globalPaletteSize = getPaletteSize(unpackedField);
+      info.globalPalette = true;
+      info.globalPaletteSize = (globalPaletteSize / 3);
+      pos += globalPaletteSize;
     }
-
     pos += 13;
+
     while (true) {
       try {
         var block = view.getUint8(pos, true);
@@ -93,9 +112,11 @@ var gify = (function() { 'use strict';
         {
           case 0x21: //EXTENSION BLOCK
             var type = view.getUint8(pos + 1, true);
-            if (type === 0xF9) {
+            
+            if (type === 0xF9) { //GRAPHICS CONTROL
                 var length = view.getUint8(pos + 2);
                 if (length === 4) {
+
                   var delay = getDuration(view.getUint16(pos + 4, true));
                   
                   if (delay < 60 && !info.isBrowserDuration) {
@@ -109,37 +130,70 @@ var gify = (function() { 'use strict';
                   info.durationChrome += (delay < 20) ? defaultDelay : delay;
                   info.durationFirefox += (delay < 20) ? defaultDelay : delay;
                   info.durationOpera += (delay < 20) ? defaultDelay : delay;
+                  
+                  //set image delay
+                  image = getImage();
+                  image.delay = delay;
+                  
+                  //set disposal method
+                  var unpackedField = getBitArray(view.getUint8(pos + 3));
+                  var disposal = unpackedField.slice(3, 6).join('');
+                  image.disposal = parseInt(disposal, 2);
 
-                  //push frame delay
-                  info.frameDelays.push(delay);
-
-                  //increment frame count
-                  info.frames++;
-                  if (info.frames > 1 && !info.animated) {
-                    info.animated = true;
-                    
-                    //quickly bail if the gif has more than one frame
-                    if (quickPass) {
-                      return info;
-                    }
-                  }
                   pos += 8;
                 }
                 else {
                   pos++;
                 }
             }
-            else { // AEB, CEB, PTEB, ETC
+            else {
+              if (type === 0xFF) { //AEB
+                //get loop count
+                info.loopCount = view.getUint8(pos + 16, true);
+              }
+
+              //CEB, PTEB, ETC
               pos += 2;
               pos += getSubBlockSize(view, pos);
             }
             break;
-          case 0x2C: //IMAGE BLOCK
-            var localPalette = byteToBitArray(view.getUint8(pos + 9, true));
-            if (localPalette[0]) {
-              //local palette?
-              pos += getPaletteSize(localPalette);
+          case 0x2C: //IMAGE DESCRIPTOR
+            if (!image) {
+              image = getImage();
             }
+            image.left = view.getUint16(pos + 1, true);
+            image.top = view.getUint16(pos + 3, true);
+            image.width = view.getUint16(pos + 5, true);
+            image.height = view.getUint16(pos + 7, true);
+
+            var unpackedField = getBitArray(view.getUint8(pos + 9, true));
+            if (unpackedField[0]) {
+              //local palette?
+              var localPaletteSize = getPaletteSize(unpackedField);
+              image.localPalette = true;
+              image.localPaletteSize = (localPaletteSize / 3);
+              
+              pos += localPaletteSize;
+            }
+            if (unpackedField[1]) {
+              //interlaced?
+              image.interlace = true;
+            }
+
+            //add image & reset object
+            info.images.push(image);
+            image = null;
+
+            //set animated flag
+            if (info.images.length > 1 && !info.animated) {
+              info.animated = true;
+
+              //quickly bail if the gif has more than one image
+              if (quickPass) {
+                return info;
+              }
+            }
+
             pos += 11;
             pos += getSubBlockSize(view, pos);
             break;
@@ -156,7 +210,9 @@ var gify = (function() { 'use strict';
       }
       
       //this shouldn't happen, but if the trailer block is missing, we should bail at EOF
-      if ((pos) >= sourceArrayBuffer.byteLength) { return info; }
+      if ((pos) >= sourceArrayBuffer.byteLength) {
+        return info;
+      }
     }
 
     return info;
