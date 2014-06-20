@@ -1,5 +1,5 @@
 /*
- * gify v1.0
+ * gify v1.1
  * https://github.com/rfrench/gify
  *
  * Copyright 2013, Ryan French
@@ -29,25 +29,35 @@ var gify = (function() { 'use strict';
   function bitToInt(bitArray) {
     return bitArray.reduce(function(s, n) { return s * 2 + n; }, 0);
   }
-  function getSubBlockSize(view, pos) {
-    var totalSize = 0;
+  function readSubBlock(view, pos, read) {
+    var subBlock = {
+      data: '',
+      size: 0
+    };
+
     while (true) {
-      var size = view.getUint8(pos + totalSize, true);
+      var size = view.getUint8(pos + subBlock.size, true);
       if (size === 0) {
-        totalSize++;
+        subBlock.size++;
         break;
       }
-      else {
-        totalSize += size + 1;
+      
+      if (read) {
+        subBlock.data += view.getString(size, pos + subBlock.size + 1);
       }
+      subBlock.size += size + 1;
     }
-    return totalSize;
+
+    return subBlock;
   }
-  function getImage() {
+  function getNewImage() {
     return {
+        identifer: '0',
         localPalette: false,
         localPaletteSize: 0,
         interlace: false,
+        comments: [],
+        text: '',
         left: 0,
         top: 0,
         width: 0,
@@ -57,7 +67,7 @@ var gify = (function() { 'use strict';
     };
   }
   function getInfo(sourceArrayBuffer, quickPass) {
-    var pos = 0, size = 0, paletteSize = 0, image;
+    var pos = 0, size = 0, paletteSize = 0, index = 0;
 
     var info = {
       valid: false,
@@ -104,6 +114,7 @@ var gify = (function() { 'use strict';
     }
     pos += 13;
 
+    var image = getNewImage();
     while (true) {
       try {
         var block = view.getUint8(pos, true);
@@ -113,7 +124,7 @@ var gify = (function() { 'use strict';
           case 0x21: //EXTENSION BLOCK
             var type = view.getUint8(pos + 1, true);
             
-            if (type === 0xF9) { //GRAPHICS CONTROL
+            if (type === 0xF9) { //GRAPHICS CONTROL EXTENSION
                 var length = view.getUint8(pos + 2);
                 if (length === 4) {
 
@@ -123,17 +134,14 @@ var gify = (function() { 'use strict';
                     info.isBrowserDuration = true;
                   }
 
-                  //http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser-compatibility
+                  //http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser-compatibility (out of date)
+                  image.delay = delay;
                   info.duration += delay;
                   info.durationIE += (delay < 60) ? defaultDelay : delay;
-                  info.durationSafari += (delay < 60) ? defaultDelay : delay;
+                  info.durationSafari += (delay < 20) ? defaultDelay : delay;
                   info.durationChrome += (delay < 20) ? defaultDelay : delay;
                   info.durationFirefox += (delay < 20) ? defaultDelay : delay;
                   info.durationOpera += (delay < 20) ? defaultDelay : delay;
-                  
-                  //set image delay
-                  image = getImage();
-                  image.delay = delay;
                   
                   //set disposal method
                   var unpackedField = getBitArray(view.getUint8(pos + 3));
@@ -147,20 +155,31 @@ var gify = (function() { 'use strict';
                 }
             }
             else {
-              if (type === 0xFF) { //AEB
-                //get loop count
-                info.loopCount = view.getUint8(pos + 16, true);
+              pos += 2;
+              var subBlock = readSubBlock(view, pos, true);
+              switch (type)
+              {
+                case 0xFF: //APPLICATION EXTENSION
+                  info.loopCount = view.getUint8(pos + 16, true);
+                  break;
+                case 0xCE: //NAME
+                  /* the only reference to this extension I could find was in
+                     gifsicle. I'm not sure if this is something gifsicle just
+                     made up or if this actually exists outside of this app */
+                  image.identifer = subBlock.data;
+                  break;
+                case 0xFE: //COMMENT EXTENSION
+                  image.comments.push(subBlock.data);
+                  break;
+                case 0x01: //PLAIN TEXT EXTENSION
+                  image.text = subBlock.data;
+                  break;
               }
 
-              //CEB, PTEB, ETC
-              pos += 2;
-              pos += getSubBlockSize(view, pos);
+              pos += subBlock.size;
             }
             break;
           case 0x2C: //IMAGE DESCRIPTOR
-            if (!image) {
-              image = getImage();
-            }
             image.left = view.getUint16(pos + 1, true);
             image.top = view.getUint16(pos + 3, true);
             image.width = view.getUint16(pos + 5, true);
@@ -182,7 +201,11 @@ var gify = (function() { 'use strict';
 
             //add image & reset object
             info.images.push(image);
-            image = null;
+            index++;
+
+            //create new image
+            image = getNewImage();
+            image.identifer = index.toString();
 
             //set animated flag
             if (info.images.length > 1 && !info.animated) {
@@ -195,7 +218,8 @@ var gify = (function() { 'use strict';
             }
 
             pos += 11;
-            pos += getSubBlockSize(view, pos);
+            var subBlock = readSubBlock(view, pos, false);
+            pos += subBlock.size;
             break;
           case 0x3B: //TRAILER BLOCK (THE END)
             return info;

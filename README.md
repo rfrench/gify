@@ -23,7 +23,7 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
 * **isBrowserDuration** (bool) - If any of the delay times are lower than the [minimum value](http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser-compatibility), this value will be set to true.
 * **duration** (int) - Actual duration calculated from the delay time for each image. If isBrowserDuration is false, you should use this value.
 * **durationIE** (int) - Duration for Internet Explorer (16fps)
-* **durationSafari** (int) - Duration for Safari in milliseconds (16fps)
+* **durationSafari** (int) - Duration for Safari in milliseconds (50fps)
 * **durationFirefox** (int) - Duration for Firefox in milliseconds (50fps)
 * **durationChrome** (int) - Duration for Chrome in milliseconds (50fps)
 * **durationOpera** (int) - Duration for Opera in milliseconds (50fps)
