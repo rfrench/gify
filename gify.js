@@ -52,7 +52,7 @@ var gify = (function() { 'use strict';
   }
   function getNewImage() {
     return {
-        identifer: '0',
+        identifier: '0',
         localPalette: false,
         localPaletteSize: 0,
         interlace: false,
@@ -166,7 +166,7 @@ var gify = (function() { 'use strict';
                   /* the only reference to this extension I could find was in
                      gifsicle. I'm not sure if this is something gifsicle just
                      made up or if this actually exists outside of this app */
-                  image.identifer = subBlock.data;
+                  image.identifier = subBlock.data;
                   break;
                 case 0xFE: //COMMENT EXTENSION
                   image.comments.push(subBlock.data);
@@ -205,7 +205,7 @@ var gify = (function() { 'use strict';
 
             //create new image
             image = getNewImage();
-            image.identifer = index.toString();
+            image.identifier = index.toString();
 
             //set animated flag
             if (info.images.length > 1 && !info.animated) {

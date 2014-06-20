@@ -29,6 +29,7 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
 * **durationOpera** (int) - Duration for Opera in milliseconds (50fps)
 
 ## image Properties
+* **identifier** (string) - Image identifier (frame number or embeded string).
 * **top** (int) - Image top position (Y).
 * **left** (int) - Image left position (X).
 * **height** (int) - Image height.
@@ -37,6 +38,8 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
 * **localPaletteSize** (int) - Size of the local color palette.
 * **interlace** (bool) - Image is/is not interlaced.
 * **delay** (int) - Delay time in milliseconds.
+* **text** (string) - frame text. aka Plain Text Extension.
+* **comments** ([comments]) - Array of comment strings.
 * **disposal** (int) - Disposal method. (0-7). See [this](http://www.w3.org/Graphics/GIF/spec-gif89a.txt) for more details.
 
 ### Example
@@ -51,9 +54,12 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
   "animated": true,
   "images": [
     {
+      "identifier": "0",
       "localPalette": false,
       "localPaletteSize": 0,
       "interlace": false,
+      "comments": [],
+      "text": "",
       "left": 0,
       "top": 0,
       "width": 1610,
@@ -62,9 +68,12 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
       "disposal": 0
     },
     {
+      "identifier": "1",
       "localPalette": true,
       "localPaletteSize": 256,
       "interlace": false,
+      "comments": [],
+      "text": "",
       "left": 0,
       "top": 0,
       "width": 1610,
@@ -73,9 +82,26 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
       "disposal": 0
     },
     {
+      "identifier": "2",
       "localPalette": true,
       "localPaletteSize": 256,
       "interlace": false,
+      "comments": [],
+      "text": "",
+      "left": 0,
+      "top": 0,
+      "width": 1610,
+      "height": 899,
+      "delay": 350,
+      "disposal": 0
+    },
+    {
+      "identifier": "3",
+      "localPalette": true,
+      "localPaletteSize": 256,
+      "interlace": false,
+      "comments": [],
+      "text": "",
       "left": 0,
       "top": 0,
       "width": 1610,
