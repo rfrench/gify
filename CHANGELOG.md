@@ -1,3 +1,7 @@
+* **June 20 2014**
+  * Added Image comments, text, and image identifier to the image object.
+  * Updated Safari duration to reflect the updated frames per second. (50fps)
+  
 * **June 13 2014**
   * 1.0 released! Unfortunately, that comes with the cost of having to break the existing API.
   * Removed frames and frameDelays from info object and replaced with images array. Use info.images.length now to get the count.
