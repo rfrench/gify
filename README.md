@@ -1,5 +1,5 @@
 # gify
-JavaScript library for decoding/parsing information from animated GIFs using an ArrayBuffer.
+JavaScript API for decoding/parsing information from animated GIFs using ArrayBuffers.
 
 ## Why?
 Once I saw [vinepeek](http://www.vpeeker.com/), I immediately wanted to build a similar site for animated GIFs. The only problem was, there was no way to quickly determine the duration of an animated GIF, which varies in different browsers. Thus, gify was born over a weekend.
