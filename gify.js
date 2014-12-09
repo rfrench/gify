@@ -73,6 +73,7 @@ var gify = (function() { 'use strict';
       valid: false,
       globalPalette: false,
       globalPaletteSize: 0,
+      globalPaletteColorsRGB:[],
       loopCount: 0,
       height: 0,
       width: 0,
@@ -111,7 +112,22 @@ var gify = (function() { 'use strict';
       info.globalPalette = true;
       info.globalPaletteSize = (globalPaletteSize / 3);
       pos += globalPaletteSize;
+   		
+	   	for (var pa=0;pa<info.globalPaletteSize;pa++)
+	    {
+	    	
+	    	var rgb=[];
+	    	for(var col=0;col<3;col++)
+	    	{
+	    		rgb.push(view.getUint8(13+pa*3+col, true));
+	    	}
+	    	info.globalPaletteColorsRGB.push(rgb.toString());
+	    }
+   
     }
+    
+    
+    
     pos += 13;
 
     var image = getNewImage();
