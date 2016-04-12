@@ -1,8 +1,8 @@
 /*
- * gify v1.1
+ * gify v1.2
  * https://github.com/rfrench/gify
  *
- * Copyright 2013, Ryan French
+ * Copyright 2015, Ryan French
  *
  * Licence: Do What The Fuck You Want To Public License
  * http://www.wtfpl.net/
@@ -73,6 +73,7 @@ var gify = (function() { 'use strict';
       valid: false,
       globalPalette: false,
       globalPaletteSize: 0,
+      globalPaletteColorsRGB:[],
       loopCount: 0,
       height: 0,
       width: 0,
@@ -97,10 +98,10 @@ var gify = (function() { 'use strict';
       return info;
     }
 
-    //get height/width
-    info.height = view.getUint16(6, true);
-    info.width = view.getUint16(8, true);
-
+    //get width / height
+    info.width = view.getUint16(6, true);
+    info.height = view.getUint16(8, true);
+    
     //not that safe to assume, but good enough by this point
     info.valid = true;
 
@@ -111,6 +112,14 @@ var gify = (function() { 'use strict';
       info.globalPalette = true;
       info.globalPaletteSize = (globalPaletteSize / 3);
       pos += globalPaletteSize;
+      for (var i = 0; i < info.globalPaletteSize; i++)
+      {
+        var palettePos = 13 + i * 3;
+        var r = view.getUint8(palettePos, true); //red
+        var g = view.getUint8(palettePos + 1, true); //green
+        var b = view.getUint8(palettePos + 2, true); //blue
+        info.globalPaletteColorsRGB.push({ r: r, g: g, b: b });
+      }
     }
     pos += 13;
 

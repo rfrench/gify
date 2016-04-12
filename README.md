@@ -16,6 +16,7 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
 * **animated** (bool) - Determines if the GIF is animated.
 * **globalPalette** (bool) - Determines if the GIF has a global color palette.
 * **globalPaletteSize** (int) - Size of the global color palette.
+* **globalPaletteColorsRGB** ([r,g,b]) - An array of objects containing the R, G, B values of the color palette. ([Beppe](https://github.com/Beppe))
 * **height** (int) - Canvas height.
 * **width** (int) - Canvas width.
 * **loopCount** (int) - Total number of times the GIF will loop. 0 represents infitine.
@@ -48,6 +49,23 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
   "valid": true,
   "globalPalette": true,
   "globalPaletteSize": 256,
+  "globalPaletteColorsRGB": [
+    {
+      "r": 50,
+      "g": 82,
+      "b": 120
+    },
+    {
+      "r": 89,
+      "g": 105,
+      "b": 119
+    },
+    {
+      "r": 4,
+      "g": 33,
+      "b": 71
+    }
+  ],
   "loopCount": 0,
   "height": 1610,
   "width": 899,

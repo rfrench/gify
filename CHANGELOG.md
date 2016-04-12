@@ -1,3 +1,7 @@
+* **April 12 2015**
+  * Bug fix for height / width being switched on the "info" object (issue #2). Thank you [Prinzhorn](https://github.com/Prinzhorn)
+  * Added global palette R,G,B color parsing. Thank you [Beppe](https://github.com/Beppe)
+
 * **June 20 2014**
   * Added Image comments, text, and image identifier to the image object.
   * Updated Safari duration to reflect the updated frames per second. (50fps)
