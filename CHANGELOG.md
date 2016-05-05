@@ -1,4 +1,7 @@
-* **April 12 2015**
+* **May 5 2016**
+  * Bug fix for parsing loop count (issue #3). Thank you [tutunci](https://github.com/tutunci)
+
+* **April 12 2016**
   * Bug fix for height / width being switched on the "info" object (issue #2). Thank you [Prinzhorn](https://github.com/Prinzhorn)
   * Added global palette R,G,B color parsing. Thank you [Beppe](https://github.com/Beppe)
 
