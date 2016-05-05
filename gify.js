@@ -169,7 +169,7 @@ var gify = (function() { 'use strict';
               switch (type)
               {
                 case 0xFF: //APPLICATION EXTENSION
-                  info.loopCount = view.getUint8(pos + 16, true);
+                  info.loopCount = view.getUint8(pos + 14, true);
                   break;
                 case 0xCE: //NAME
                   /* the only reference to this extension I could find was in
