@@ -16,7 +16,7 @@
     "rfrench"
   ],
   "dependencies": {
-    "jdataview": "2.5.1"
+    "jdataview": "2.5.0"
   },
   "license": "Do What The Fuck You Want To Public License",
   "ignore": [

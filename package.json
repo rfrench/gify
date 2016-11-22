@@ -16,7 +16,7 @@
   }],
   "scripts": {},
   "dependencies": {
-    "jdataview": "2.5.1"
+    "jdataview": "2.5.0"
   },
   "engine": {
     "node": ">= 0.8"
