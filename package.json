@@ -1,0 +1,25 @@
+{
+  "name": "gify",
+  "version": "0.1.0",
+  "description": "JavaScript API for decoding/parsing information from animated GIFs using ArrayBuffers",
+  "main": "./gify.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rfrench/gify.git"
+  },
+  "keywords": [
+    "gif",
+    "animated gif"
+  ],
+  "contributors": [{
+    "name": "rfrench"
+  }],
+  "scripts": {},
+  "dependencies": {
+    "jdataview": "2.5.1"
+  },
+  "engine": {
+    "node": ">= 0.8"
+  },
+  "license": "Do What The Fuck You Want To Public License"
+}
