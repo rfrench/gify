@@ -1,3 +1,6 @@
+* **June 27 2017**
+  * Bug fix for loop counts. Only set the loop count when the identifier is NETSCAPE (issue #5). Thank you [Javi](https://github.com/chuntin)
+
 * **May 5 2016**
   * Bug fix for parsing loop count (issue #3). Thank you [tutunci](https://github.com/tutunci)
 

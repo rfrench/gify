@@ -169,7 +169,13 @@ var gify = (function() { 'use strict';
               switch (type)
               {
                 case 0xFF: //APPLICATION EXTENSION
-                  info.loopCount = view.getUint8(pos + 14, true);
+                  /* since multiple application extension blocks can
+                     occur, we need to make sure we're only setting
+                     the loop count when the identifer is NETSCAPE */
+                  var identifier = view.getString(8, pos + 1);
+                  if (identifier === 'NETSCAPE') {
+                    info.loopCount = view.getUint8(pos + 14, true);
+                  }
                   break;
                 case 0xCE: //NAME
                   /* the only reference to this extension I could find was in
