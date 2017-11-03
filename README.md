@@ -144,6 +144,3 @@ gify requires [jDataView](https://github.com/vjeux/jDataView) for reading binary
 * [Animated GIF Frame Rate by Browser](http://nullsleep.tumblr.com/post/16524517190/animated-gif-minimum-frame-delay-browser-compatibility) - An awesome breakdown of how each browser renders animated GIFs. Thanks to Jeremiah Johnson for doing the hard work.
 * [GIF Format](http://www.onicos.com/staff/iz/formats/gif.html) - GIF blocks.
 * [Hexfiend](http://ridiculousfish.com/hexfiend/) - Awesome open source HEX editor (OSX)
-
-## License
-Licence: [Do What The Fuck You Want To Public License](http://sam.zoy.org/wtfpl/)

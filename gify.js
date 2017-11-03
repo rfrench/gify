@@ -4,7 +4,6 @@
  *
  * Copyright 2015, Ryan French
  *
- * http://www.wtfpl.net/
  */
 
 /*global console, jDataView, ArrayBuffer */
