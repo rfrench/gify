@@ -4,7 +4,6 @@
  *
  * Copyright 2015, Ryan French
  *
- * Licence: Do What The Fuck You Want To Public License
  * http://www.wtfpl.net/
  */
 
