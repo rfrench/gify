@@ -33,7 +33,7 @@
             template.append('<pre id="json">' + JSON.stringify(gifInfo, undefined, 2) + '</pre><br>');
 
             index++;
-            $('#tbl').append(template);
+            $('#tbl').prepend(template);
           };
         };
 
