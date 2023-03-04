@@ -1,97 +1,97 @@
 <html>
-<head>
-<meta charset="utf-8"/>
-<script type="text/javascript" src="gify.js"></script>
-<script type="text/javascript" src="jdataview.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
-<script type="text/javascript">
-var index = 1;
+  <head>
+    <meta charset="utf-8" />
+    <script type="text/javascript" src="gify.js"></script>
+    <script type="text/javascript" src="jdataview.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+    <script type="text/javascript">
+      var index = 1;
 
-function handleFiles(e) {
-	var file = e.target.files[0];
-	var ctx = document.getElementById('canvas').getContext('2d');
-	var reader = new FileReader;
+      function handleFiles(e) {
+        var file = e.target.files[0];
+        var ctx = document.getElementById('canvas').getContext('2d');
+        var reader = new FileReader();
 
- reader.onload = function(event) {
-	var blob = new Blob([event.target.result]);
-	window.URL = window.URL || window.webkitURL;
-	var blobURL = window.URL.createObjectURL(blob);
-	
-		var img = new Image();
-		img.src = blobURL;
-		
-		img.onload = function() {
-			var startTime = Date.now();
-			var gifInfo = gify.getInfo(reader.result);
+        reader.onload = function (event) {
+          var blob = new Blob([event.target.result]);
+          window.URL = window.URL || window.webkitURL;
+          var blobURL = window.URL.createObjectURL(blob);
 
-			var template = $('#template').clone();
-			template.attr('id', 'gify_' + index);
+          var img = new Image();
+          img.src = blobURL;
 
+          img.onload = function () {
+            var startTime = Date.now();
+            var gifInfo = gify.getInfo(reader.result);
 
-			template.html('<b>File:</b> ' + file.name + '<br>');
-			template.append('<b>Duration:</b> ' + (Date.now() - startTime) + ' ms.<br>');
-			template.append('<b>Frames:</b> ' + gifInfo.images.length);
-			template.append('<pre id="json">' + JSON.stringify(gifInfo, undefined, 2) + '</pre><br>');
+            var template = $('#template').clone();
+            template.attr('id', 'gify_' + index);
 
-			index++;
-			$('#tbl').append(template);
-		};
-	};
+            template.html('<b>File:</b> ' + file.name + '<br>');
+            template.append('<b>Duration:</b> ' + (Date.now() - startTime) + ' ms.<br>');
+            template.append('<b>Frames:</b> ' + gifInfo.images.length + '<br>');
+            template.append('<pre id="json">' + JSON.stringify(gifInfo, undefined, 2) + '</pre><br>');
 
-	reader.readAsArrayBuffer(file);
-}
+            index++;
+            $('#tbl').append(template);
+          };
+        };
 
-function getImageSize(img, maxWidth, maxHeight) {
-	var ratio = 1;
+        reader.readAsArrayBuffer(file);
+      }
 
-	if(img.width > maxWidth)
-		ratio = maxWidth / img.width;
-	else if(img.height > maxHeight)
-		ratio = maxHeight / img.height;
+      function getImageSize(img, maxWidth, maxHeight) {
+        var ratio = 1;
 
-	var size = {};
-	size.height = Math.round(img.height * ratio);
-	size.width = Math.round(img.width * ratio);
+        if (img.width > maxWidth) {
+          ratio = maxWidth / img.width;
+        } else if (img.height > maxHeight) {
+          ratio = maxHeight / img.height;
+        }
 
-	return size;
-}
+        var size = {};
+        size.height = Math.round(img.height * ratio);
+        size.width = Math.round(img.width * ratio);
 
-function dataURItoArrayBuffer(dataURI) {
-	var byteString;
-	if (dataURI.split(',')[0].indexOf('base64') >= 0)
-		byteString = atob(dataURI.split(',')[1]);
-	else
-		byteString = unescape(dataURI.split(',')[1]);
+        return size;
+      }
 
-	// separate out the mime component
-	var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0]
+      function dataURItoArrayBuffer(dataURI) {
+        var byteString;
+        if (dataURI.split(',')[0].indexOf('base64') >= 0) {
+          byteString = atob(dataURI.split(',')[1]);
+        } else {
+          byteString = unescape(dataURI.split(',')[1]);
+        }
 
-	// write the bytes of the string to an ArrayBuffer
-	var ab = new ArrayBuffer(byteString.length);
-	var ia = new Uint8Array(ab);
-	for (var i = 0; i < byteString.length; i++) {
-		ia[i] = byteString.charCodeAt(i);
-	}
+        // separate out the mime component
+        var mimeString = dataURI.split(',')[0].split(':')[1].split(';')[0];
 
-	return ab;
-}
+        // write the bytes of the string to an ArrayBuffer
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) {
+          ia[i] = byteString.charCodeAt(i);
+        }
 
-window.onload = function() {
-	var input = document.getElementById('input');
-	input.addEventListener('change', handleFiles);
-}
+        return ab;
+      }
 
-</script>
-</head>
-<body style='font-family:Arial, Helvetica, sans-serif;'>
-<h1>gify Example</h1>
-<input type="file" id="input"/>
-<br>
-<div style="display:none">
-	<div id="template" style="margin-bottom:10px;"></div>
-</div>
-<br>
-<div id="tbl"></div>
-<canvas id="canvas" style="display:none;"></canvas>
-</body>
+      window.onload = function () {
+        var input = document.getElementById('input');
+        input.addEventListener('change', handleFiles);
+      };
+    </script>
+  </head>
+  <body style="font-family: Arial, Helvetica, sans-serif">
+    <h1>gify Example</h1>
+    <input type="file" id="input" />
+    <br />
+    <div style="display: none">
+      <div id="template" style="margin-bottom: 10px"></div>
+    </div>
+    <br />
+    <div id="tbl"></div>
+    <canvas id="canvas" style="display: none"></canvas>
+  </body>
 </html>
