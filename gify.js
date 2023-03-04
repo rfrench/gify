@@ -78,7 +78,7 @@ var gify = (function () {
       globalPalette: false,
       globalPaletteSize: 0,
       globalPaletteColorsRGB: [],
-      loopCount: 0,
+      loopCount: -1, // `-1` means no loop
       height: 0,
       width: 0,
       animated: false,
@@ -170,9 +170,13 @@ var gify = (function () {
               var subBlock = readSubBlock(view, pos, true);
               switch (type) {
                 case 0xff: // APPLICATION EXTENSION
-                  /* since multiple application extension blocks can
-                     occur, we need to make sure we're only setting
-                     the loop count when the identifer is NETSCAPE */
+                  /**
+                   * Since multiple application extension blocks can occur,
+                   * we need to make sure we're only setting the loop count when the identifer is NETSCAPE.
+                   *
+                   * If GIF exported by Photoshop without loop, the Application Extension does not contain the NETSCAPE identifier, only the XMP Data identifier.
+                   * If GIF loops forever or loops n times (n > 0), the NETSCAPE identifier must be present in the Application Extension.
+                   */
                   var identifier = view.getString(8, pos + 1);
                   if (identifier === 'NETSCAPE') {
                     info.loopCount = view.getUint8(pos + 14, true);
